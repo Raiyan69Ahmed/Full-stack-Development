@@ -1,0 +1,27 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<div class="card mx-auto" style="max-width: 450px;">
+    <div class="card-body">
+        <h3 class="text-center mb-4">Login</h3>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            <div class="mb-3">
+                <label>Email or Username</label>
+                <input type="text" name="username_or_email" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+
+            <button class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
