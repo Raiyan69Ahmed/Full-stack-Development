@@ -1,0 +1,113 @@
+{% extends "base.twig" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fa-solid fa-headphones"></i> Song Collection</h2>
+    {% if loggedIn %}
+    <a href="add.php" class="btn btn-success">
+        <i class="fa-solid fa-plus"></i> Add Song
+    </a>
+    {% endif %}
+</div>
+
+<form action="" method="get" class="row g-2 mb-4 p-3 bg-light border rounded shadow-sm position-relative">
+
+    <div class="col-md-3 position-relative">
+        <input type="text" id="searchTitle" name="title" value="{{ search_title|default('') }}"
+               class="form-control" placeholder="🔎 Search by Title...">
+        <ul id="suggestions" 
+            class="list-group position-absolute w-100" 
+            style="z-index: 1000; display:none;"></ul>
+    </div>
+
+    <div class="col-md-3">
+        <input type="text" name="artist" value="{{ search_artist|default('') }}"
+               class="form-control" placeholder="Search by Artist">
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" name="genre" value="{{ search_genre|default('') }}"
+               class="form-control" placeholder="Genre">
+    </div>
+
+    <div class="col-md-2">
+        <input type="number" name="year" value="{{ search_year|default('') }}"
+               class="form-control" placeholder="Year">
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+    </div>
+
+</form>
+
+<table class="table table-hover table-striped shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Streams</th>
+            {% if loggedIn %}<th>Actions</th>{% endif %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for s in songs %}
+        <tr>
+            <td><i class="fa-solid fa-music"></i> {{ s.title }}</td>
+            <td>{{ s.artist }}</td>
+            <td><span class="badge bg-info text-dark">{{ s.genre }}</span></td>
+            <td>{{ s.year }}</td>
+
+            <td>
+
+                {# Spotify Link #}
+                {% if s.spotify_url %}
+                    <a href="{{ s.spotify_url }}" target="_blank" title="Open in Spotify">
+                        <i class="fa-brands fa-spotify text-success"></i>
+                    </a>
+                {% else %}
+                    <i class="fa-brands fa-spotify text-muted"></i>
+                {% endif %}
+                {{ s.spotify_streams }}
+
+                &nbsp;&nbsp;
+
+                {# YouTube Link #}
+                {% if s.youtube_url %}
+                    <a href="{{ s.youtube_url }}" target="_blank" title="Open in YouTube">
+                        <i class="fa-brands fa-youtube text-danger"></i>
+                    </a>
+                {% else %}
+                    <i class="fa-brands fa-youtube text-muted"></i>
+                {% endif %}
+                {{ s.youtube_views }}
+
+            </td>
+
+            {% if loggedIn %}
+            <td>
+                <a href="edit.php?id={{ s.id }}" class="btn btn-sm btn-primary me-1">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <form action="delete.php" method="post" style="display:inline-block;">
+                    <input type="hidden" name="id" value="{{ s.id }}">
+                    <button class="btn btn-sm btn-danger">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if songs is empty %}
+    <p class="text-center text-muted">No songs found.</p>
+{% endif %}
+
+{% endblock %}
